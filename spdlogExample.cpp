@@ -25,9 +25,7 @@ int main(int, char*[])
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
 
-
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
-
 
         // Create basic file logger (not rotated)
         auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic.txt");
