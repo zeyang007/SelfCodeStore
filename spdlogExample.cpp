@@ -46,7 +46,6 @@ int main(int, char*[])
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         rotating_logger->info("This is another message with custom format");
 
-
         // Runtime log levels
         spd::set_level(spd::level::info); //Set global log level to info
         console->debug("This message shold not be displayed!");
