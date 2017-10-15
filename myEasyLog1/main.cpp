@@ -2,15 +2,6 @@
 
 INITIALIZE_EASYLOGGINGPP
 
-static unsigned int idx = 0;
-
-void rolloutHandler(const char* filename, std::size_t size)
-{
-    std::stringstream stream;
-    stream << filename << "." << ++idx;
-    filename = (char *)(&idx);
-}
-
 int main() {
 
     // Load configuration from file
