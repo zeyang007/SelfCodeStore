@@ -4,11 +4,17 @@
 
 int main() {
 
-    auto worker = g3::LogWorker::createLogWorker();
+    std::unique_ptr<g3::LogWorker> logWorker = g3::LogWorker::createLogWorker();
 
-    worker->addDefaultLogger("tryG3log", "./log/");
+    /**
+    A convenience function to add the default g3::FileSink to the log worker
+     @param log_prefix that you want
+     @param log_directory where the log is to be stored.
+     @return a handle for API access to the sink. See the README for example usage
+     **/
+    logWorker->addDefaultLogger("tryG3log", "./log/");
 
-    g3::initializeLogging(worker.get());
+    g3::initializeLogging(logWorker.get());
 
     LOGF(INFO, "Hi log %d", 123);
     LOG(INFO) << "Test SLOG INFO";
