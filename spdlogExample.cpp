@@ -2,6 +2,7 @@
 #define SPDLOG_DEBUG_ON
 
 #include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
 #include <iostream>
 #include <memory>
 
@@ -30,15 +31,17 @@ int main(int, char*[])
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
 
-        SPDLOG_DEBUG_IF(console, true, "This is a debug log");
-
-
+        // The logger can be obtained by name
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
+        // Customize msg format for all messages
+        spd::set_pattern("[%Y-%m-%d %H:%M:%S.%f] [thread %t] [level %l] %v ");
 
         // 1 Create a file rotating logger with 5mb size max and 3 rotated files
         auto rotating_logger = spd::rotating_logger_mt("some_logger_name", "logs/mylogfile", 1048576 * 5, 3);
-        for (int i = 0; i < 10; ++i)
+        // Customize msg format for specific logger's log
+        rotating_logger->set_pattern("[%Y-%m-%d %H:%M:%S.%f] [Process %P] [level %l] %v ");
+        for (int i = 0; i < 1000; ++i)
             rotating_logger->info("{} * {} equals 0", i, i);
 
         // 2 Create a daily logger - a new file is created every day on 2:30am
@@ -47,22 +50,13 @@ int main(int, char*[])
         daily_logger->flush_on(spd::level::err);
         daily_logger->info(123.44);
 
-        // Customize msg format for all messages
-        spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
-        rotating_logger->info("This is another message with custom format");
-
         // Runtime log levels
-        spd::set_level(spd::level::info); //Set global log level to info
+        spd::set_level(spd::level::info);
+        // Set global log level to info
         console->debug("This message shold not be displayed!");
-        console->set_level(spd::level::debug); // Set specific logger's log level
+        // Set specific logger's log level
+        console->set_level(spd::level::debug);
         console->debug("This message shold be displayed..");
-
-        // Compile time log levels
-        // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
-        SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
-        SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-        SPDLOG_DEBUG_IF(console, true, "This is a debug log");
-
 
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
@@ -119,9 +113,7 @@ void user_defined_example()
     spd::get("console")->info("user defined type: {}", my_type { 14 });
 }
 
-//
 //custom error handler
-//
 void err_handler_example()
 {
     //can be set globaly or per logger(logger->set_error_handler(..))
